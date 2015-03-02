@@ -11,25 +11,37 @@ var getElementsByClassName = function(className
   if (!result){
   	var result=[];
   }
-  else{
-  	console.log(result);
-  }
+  // else{
+  // 	console.log(result);
+  // }
   if (element==undefined){
   	var children=document.childNodes;
   }
   else{
   	var children=element.childNodes;
   }
-  //can use each or reduce here, think about it...
-  for (var i=0;i<children.length;i++){
-  	// console.log(children[i],children[i].childNodes.length,children[i].classList);
-  	if (_.indexOf(children[i].classList,className)!=-1){
-  		result.push(children[i]);
+  //iterative method...
+  // for (var i=0;i<children.length;i++){
+  // 	// console.log(children[i],children[i].childNodes.length,children[i].classList);
+  // 	if (_.indexOf(children[i].classList,className)!=-1){
+  // 		result.push(children[i]);
+  // 	}
+  // 	if (children[i].childNodes.length>0){
+  // 		getElementsByClassName(className,children[i],result);
+  // 	}
+  // }
+  // functional method (using reduce)
+  _.reduce(children,function(dummy,item){
+  	// console.log(result);
+  	if (_.indexOf(item.classList,className)!=-1){
+  		// console.log(_.indexOf(result,item.classList));
+  		result.push(item);
   	}
-  	if (children[i].childNodes.length>0){
-  		getElementsByClassName(className,children[i],result);
+  	if (item.childNodes.length>0){
+  		getElementsByClassName(className,item,result);
   	}
-  }
+  },result);
+  console.log('RESULT',result);
   return result;
   // console.log(className);
   // console.log(children);
