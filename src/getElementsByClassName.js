@@ -40,7 +40,7 @@ var getElementsByClassName = function(className
   	if (item.childNodes.length>0){
   		getElementsByClassName(className,item,result);
   	}
-  },result);
+  },[]);
   console.log('RESULT',result);
   return result;
   // console.log(className);
