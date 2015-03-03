@@ -41,7 +41,7 @@ var getElementsByClassName = function(className
   		getElementsByClassName(className,item,result);
   	}
   },[]);
-  console.log('RESULT',result);
+  // console.log('RESULT',result);
   return result;
   // console.log(className);
   // console.log(children);
