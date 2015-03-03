@@ -14,12 +14,18 @@ var stringifyJSON = function(obj) {
   		return (Array.isArray(obj)) ? "[]" : "{}";
   	}
   	else{
-  		string="[";
+  		(Array.isArray(obj)) ? string="[" : string="{";
 	_.each(obj,function(item,index){
-		console.log(index,item);
-		string+=item.toString();
+		// console.log(index,item);
+		if (index===obj.length-1){
+			string+=stringifyJSON(item);
+		}
+		else{
+			string+=stringifyJSON(item)+','
+		}
+
 		});
-		string+="]";
+		(Array.isArray(obj)) ? string+="]" : string+="}";
 	}
   }
   else{
