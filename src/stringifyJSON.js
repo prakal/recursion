@@ -15,28 +15,31 @@ var stringifyJSON = function(obj) {
   	}
   	else{
   		(Array.isArray(obj)) ? string="[" : string="{";
+  	// firstItem is a test to check whether it is the first item of the object. This is required for accurate placement of commas.
+		var firstItem=true;
 	_.each(obj,function(item,index){
-		console.log(index,item);
+		// console.log(index,item);
 		if (Array.isArray(obj)===false){
 			//collection is an object
-			if (index===obj.length-1){
+			if (firstItem===true){
+				console.log('first item');
 				string+=stringifyJSON(index)+":"+stringifyJSON(item);
 			}
 			else{
-				string+=stringifyJSON(index)+":"+stringifyJSON(item)+',';
+				string+=','+stringifyJSON(index)+":"+stringifyJSON(item);
 			}
+			firstItem=false;
 		}
 		else{
 			// collection is an array
 			if (index===obj.length-1){
 			string+=stringifyJSON(item);
-		}
+			}
 		else{
 			string+=stringifyJSON(item)+',';
-		}
+			}
 
-	}
-		
+		}
 
 		});
 		(Array.isArray(obj)) ? string+="]" : string+="}";
