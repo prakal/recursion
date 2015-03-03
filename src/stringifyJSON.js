@@ -5,6 +5,7 @@
 
 var stringifyJSON = function(obj) {
   // your code goes here
+
   var string="";
   if (typeof obj=='object'){
   	if(obj===null){
@@ -19,10 +20,12 @@ var stringifyJSON = function(obj) {
 		var firstItem=true;
 	_.each(obj,function(item,index){
 		// console.log(index,item);
+		if (typeof item==='function' || item===undefined){
+			return {};
+		}
 		if (Array.isArray(obj)===false){
 			//collection is an object
 			if (firstItem===true){
-				console.log('first item');
 				string+=stringifyJSON(index)+":"+stringifyJSON(item);
 			}
 			else{
@@ -49,6 +52,7 @@ var stringifyJSON = function(obj) {
   	if (typeof obj=='string'){
   		return '"'+obj+'"';
   	}
+
   	console.log(typeof obj);
   	string+=obj.toString();
 	}
