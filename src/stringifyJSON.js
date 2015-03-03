@@ -16,13 +16,27 @@ var stringifyJSON = function(obj) {
   	else{
   		(Array.isArray(obj)) ? string="[" : string="{";
 	_.each(obj,function(item,index){
-		// console.log(index,item);
-		if (index===obj.length-1){
+		console.log(index,item);
+		if (Array.isArray(obj)===false){
+			//collection is an object
+			if (index===obj.length-1){
+				string+=stringifyJSON(index)+":"+stringifyJSON(item);
+			}
+			else{
+				string+=stringifyJSON(index)+":"+stringifyJSON(item)+',';
+			}
+		}
+		else{
+			// collection is an array
+			if (index===obj.length-1){
 			string+=stringifyJSON(item);
 		}
 		else{
-			string+=stringifyJSON(item)+','
+			string+=stringifyJSON(item)+',';
 		}
+
+	}
+		
 
 		});
 		(Array.isArray(obj)) ? string+="]" : string+="}";
