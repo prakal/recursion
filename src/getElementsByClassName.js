@@ -31,7 +31,7 @@ var getElementsByClassName = function(className
   // 	}
   // }
   // functional method (using reduce)
-  _.reduce(children,function(dummy,item){
+  _.each(children,function(item){
   	// console.log(result);
   	if (_.indexOf(item.classList,className)!=-1){
   		// console.log(_.indexOf(result,item.classList));
@@ -40,7 +40,7 @@ var getElementsByClassName = function(className
   	if (item.childNodes.length>0){
   		getElementsByClassName(className,item,result);
   	}
-  },[]);
+  });
   // console.log('RESULT',result);
   return result;
   // console.log(className);
