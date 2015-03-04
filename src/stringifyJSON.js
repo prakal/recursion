@@ -53,7 +53,7 @@ var stringifyJSON = function(obj) {
   		return '"'+obj+'"';
   	}
 
-  	console.log(typeof obj);
+  	// console.log(typeof obj);
   	string+=obj.toString();
 	}
 	return string;
