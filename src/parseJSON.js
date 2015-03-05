@@ -35,12 +35,13 @@ var parseJSON = function(json) {
 	else{
 		var obj={};
 	}
+		// going thru each item in array or object
 		while (done===false){
 			// console.log('inside',inside);
 			var comma=inside.search(/\,/);
 			var colon;
 			var value;
-			// console.log('cimma at',comma);
+			// console.log('comma at',comma);
 			if (comma===-1){
 				if (what==='square'){
 					value = (parseInt(inside)) ? parseInt(inside) : quoteSlice(inside);
@@ -51,7 +52,7 @@ var parseJSON = function(json) {
 					value = inside.slice(colon+1);
 					key=inside.slice(0,colon);
 					
-					console.log('valdsjg',value);
+					console.log('value is',value);
 					obj[quoteSlice(key)]=quoteSlice(value);
 				}
 				
@@ -65,9 +66,14 @@ var parseJSON = function(json) {
 					array.push(value);
 					inside=inside.slice(comma+1);
 				}
-				// else{
-
-				// }
+				else{
+					colon=inside.search(/\:/);
+					value = inside.slice(colon+1,comma);
+					key=inside.slice(0,colon);
+					console.log('value is',value);
+					obj[quoteSlice(key)]=quoteSlice(value);
+					inside=inside.slice(comma+1);
+				}
 				
 				// console.log(value,inside);
 				
