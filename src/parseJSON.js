@@ -18,14 +18,16 @@ var parseJSON = function(json) {
   		quote=quote.slice(quoteStart+1,quoteStart+quoteEnd+1);
   	}
   	console.log(quote,quoteStart,quoteEnd);
-  	return quote;
+  	// null, true, false cases
+  	return (quote==="null") ? null : (quote==="true") ? true : (quote==="false") ? false : quote;
+  	// return quote;
   }
   var objectArrayParser=function(open,close,what){
 	if (close-open===1){
 		return (what==='square') ? [] : {};
 	}
 	var inside=json.slice(open+1,close);
-	console.log('inside',inside);
+	//console.log('inside',inside);
 	// console.log(close-open,json[open],json[close]);
 	var done=false;
   	if (what==='square'){
@@ -39,17 +41,25 @@ var parseJSON = function(json) {
 		while (done===false){
 			// console.log('inside',inside);
 			var comma=inside.search(/\,/);
+			console.log('comma at',comma);
 			var colon;
 			var value;
 			// console.log('comma at',comma);
 			if (comma===-1){
 				if (what==='square'){
-					value = (parseInt(inside)) ? parseInt(inside) : quoteSlice(inside);
+					var decimalTest=/\./.test(inside);
+					if (decimalTest===false){
+						value = (!isNaN(parseInt(inside)) ? parseInt(inside) : quoteSlice(inside));
+					}
+					else{
+						value = (!isNaN(parseFloat(inside)) ? parseFloat(inside) : quoteSlice(inside));
+					}
+					
 					array.push(value);
 				}
 				else{
 					colon=inside.search(/\:/);
-					value = inside.slice(colon+1);
+					value = inside.slice(colon+2);
 					key=inside.slice(0,colon);
 					
 					console.log('value is',value);
@@ -61,18 +71,34 @@ var parseJSON = function(json) {
 			else{
 				if (what==='square'){
 					value=inside.slice(0,comma);
-					console.log(value,parseInt(value));
-					value = (parseInt(value)) ? parseInt(value) : quoteSlice(value);
+					var decimalTest=/\./.test(value);
+					console.log(value,parseInt(value),decimalTest);
+					if (decimalTest===false){
+						value = (!isNaN(parseInt(value)) ? parseInt(value) : quoteSlice(value));
+					}
+					else{
+						value = (!isNaN(parseFloat(value)) ? parseFloat(value) : quoteSlice(value));
+					}
+					
 					array.push(value);
 					inside=inside.slice(comma+1);
 				}
 				else{
 					colon=inside.search(/\:/);
-					value = inside.slice(colon+1,comma);
+					if (colon>comma){
+						// finding next comma after colon:
+						console.log('next comma');
+						var comma2=comma+inside.slice(comma+1).search(/\,/);
+					}
+					else{
+						var comma2=comma;
+					}
+					console.log(inside,colon,comma2);
+					value = inside.slice(colon+2,comma2+1);
 					key=inside.slice(0,colon);
-					console.log('value is',value);
+					console.log('value is',value,'key is',key);
 					obj[quoteSlice(key)]=quoteSlice(value);
-					inside=inside.slice(comma+1);
+					inside=inside.slice(comma2+2);
 				}
 				
 				// console.log(value,inside);
