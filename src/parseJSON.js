@@ -11,6 +11,9 @@ var parseJSON = function(json) {
   	// if (quote===""){
   	// 	return quote;
   	// }
+  	if (typeof quote==="object"){
+  		return quote;
+  	}
   	var quoteStart=quote.search(/\"/);
   	var quoteEnd=quote.slice(quoteStart+1).search(/\"/);
   	console.log('before',quote);
@@ -21,13 +24,13 @@ var parseJSON = function(json) {
   	// null, true, false cases
   	return (quote.trim()==="null") ? null : (quote.trim()==="true") ? true : (quote.trim()==="false") ? false : quote;
   	// return quote;
-  }
+  };
   var objectArrayParser=function(open,close,what){
 	if (close-open===1){
 		return (what==='square') ? [] : {};
 	}
 	var inside=json.slice(open+1,close);
-	//console.log('inside',inside);
+	console.log(json,'inside',inside);
 	// console.log(close-open,json[open],json[close]);
 	var done=false;
   	if (what==='square'){
@@ -59,10 +62,17 @@ var parseJSON = function(json) {
 				}
 				else{
 					colon=inside.search(/\:/);
-					value = inside.slice(colon+2);
-					key=inside.slice(0,colon);
-					
+					var value = inside.slice(colon+1);
+					var key=inside.slice(0,colon);
+					// console.log('inside',inside);
 					console.log('value is',value);
+					console.log('key is',key);
+					// console.log(value.trim()[0],value.trim().slice(-1));
+					if (value.trim()[0]==='{' && value.trim().slice(-1)==='}'){
+						console.log('invoking internal object');
+						value=parseJSON(value);
+					}
+					console.log(typeof value);
 					obj[quoteSlice(key)]=quoteSlice(value);
 				}
 				
@@ -118,9 +128,20 @@ var parseJSON = function(json) {
   };
   var sqOpen=json.search(/\[/);
   var sqClosed=json.search(/\]/);
+  // if (sqClosed){
+  // 	while (/\]/.test(json.slice(sqClosed+1))){
+  // 		sqClosed=json.slice(sqClosed+1).search(/\]/);
+  // 	}
+  // }
+  
   var cuOpen=json.search(/\{/);
   var cuClosed=json.search(/\}/);
-  
+  // console.log('does test for more braces work',/\}/.test(json.slice(cuClosed+1)),'next brace at',cuClosed+1+json.slice(cuClosed+1).search(/\}/));
+  if (cuClosed){
+  	while (/\}/.test(json.slice(cuClosed+1))){
+  		cuClosed=cuClosed+1+json.slice(cuClosed+1).search(/\}/);
+  	}
+  }
   if (sqOpen===0){
   	// call objectArrayParser with what='array'
   	return objectArrayParser(sqOpen,sqClosed,'square');
