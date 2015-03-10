@@ -19,7 +19,7 @@ var parseJSON = function(json) {
   	}
   	console.log(quote,quoteStart,quoteEnd);
   	// null, true, false cases
-  	return (quote==="null") ? null : (quote==="true") ? true : (quote==="false") ? false : quote;
+  	return (quote.trim()==="null") ? null : (quote.trim()==="true") ? true : (quote.trim()==="false") ? false : quote;
   	// return quote;
   }
   var objectArrayParser=function(open,close,what){
@@ -88,13 +88,13 @@ var parseJSON = function(json) {
 					if (colon>comma){
 						// finding next comma after colon:
 						console.log('next comma');
-						var comma2=comma+inside.slice(comma+1).search(/\,/);
+						var comma2=comma+inside.slice(comma+1).search(/\,/)+1;
 					}
 					else{
 						var comma2=comma;
 					}
 					console.log(inside,colon,comma2);
-					value = inside.slice(colon+2,comma2+1);
+					value = inside.slice(colon+2,comma2);
 					key=inside.slice(0,colon);
 					console.log('value is',value,'key is',key);
 					obj[quoteSlice(key)]=quoteSlice(value);
