@@ -11,7 +11,8 @@ var parseJSON = function(json) {
   	// if (quote===""){
   	// 	return quote;
   	// }
-  	if (typeof quote==="object"){
+  	if (quote instanceof Object){
+  		// we do not need to manipulate objects in quoteSlice, only strings.
   		return quote;
   	}
   	var quoteStart=quote.search(/\"/);
@@ -57,23 +58,30 @@ var parseJSON = function(json) {
 					else{
 						value = (!isNaN(parseFloat(inside)) ? parseFloat(inside) : quoteSlice(inside));
 					}
-					
+					if (inside.trim()[0]==='[' && inside.trim().slice(-1)===']'){
+						console.log('invoking internal object');
+						value=parseJSON(inside);
+					}
 					array.push(value);
 				}
 				else{
 					colon=inside.search(/\:/);
 					var value = inside.slice(colon+1);
 					var key=inside.slice(0,colon);
-					// console.log('inside',inside);
+					console.log('inside',inside);
 					console.log('value is',value);
 					console.log('key is',key);
-					// console.log(value.trim()[0],value.trim().slice(-1));
-					if (value.trim()[0]==='{' && value.trim().slice(-1)==='}'){
-						console.log('invoking internal object');
-						value=parseJSON(value);
+					if (inside.length>0){
+						// console.log(value.trim()[0],value.trim().slice(-1));
+						// checking for nested object:
+						if ((value.trim()[0]==='[' && value.trim().slice(-1)===']') ||(value.trim()[0]==='{' && value.trim().slice(-1)==='}')){
+							console.log('invoking internal object');
+							value=parseJSON(value);
+						}
+						console.log(typeof value);
+						obj[quoteSlice(key)]=quoteSlice(value);
 					}
-					console.log(typeof value);
-					obj[quoteSlice(key)]=quoteSlice(value);
+
 				}
 				
 				done=true;
@@ -104,11 +112,22 @@ var parseJSON = function(json) {
 						var comma2=comma;
 					}
 					console.log(inside,colon,comma2);
-					value = inside.slice(colon+2,comma2);
 					key=inside.slice(0,colon);
+					if (/\[/.test(inside)){
+						// find the corollory ] for the [ by reversing string and searching it.
+						var endOfArrayPosition=inside.length-1-(inside.split('').reverse().join('')).search(/\]/);
+						console.log('found end of array at:',endOfArrayPosition);
+						var startOfArrayPosition=inside.search(/\[/);
+						value=parseJSON(inside.slice(startOfArrayPosition,endOfArrayPosition+1));
+						inside=inside.slice(endOfArrayPosition+1);
+					}
+					else{
+						value = inside.slice(colon+2,comma2);
+						inside=inside.slice(comma2+2);
+					}
+					
 					console.log('value is',value,'key is',key);
 					obj[quoteSlice(key)]=quoteSlice(value);
-					inside=inside.slice(comma2+2);
 				}
 				
 				// console.log(value,inside);
