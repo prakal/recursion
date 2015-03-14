@@ -16,12 +16,21 @@ var parseJSON = function(json) {
   		return quote;
   	}
   	var quoteStart=quote.search(/\"/);
-  	var quoteEnd=quote.slice(quoteStart+1).search(/\"/);
-  	console.log('before',quote);
+  	//var quoteEnd=quote.slice(quoteStart+1).search(/\"/);
+  	var quoteEnd=quote.length-1-(quote.split('').reverse().join('')).search(/\"/);
+  	console.log('before',quote,quoteStart,quoteEnd);
   	if (quoteStart!=-1 && quoteEnd!=-1){
-  		quote=quote.slice(quoteStart+1,quoteStart+quoteEnd+1);
+  		quote=quote.slice(quoteStart+1,quoteEnd);
   	}
   	console.log(quote,quoteStart,quoteEnd);
+  	if (/\\\\/.test(quote)){
+  		// replace single backslash followed by x with x. $2 is the second character in the pattern, in this case it is '"'.
+  		quote=quote.replace(/(\\)([^\\])/g,"$2");
+  		// replace double backslash with single backslash:
+  		quote=quote.replace("\\\\","\\");
+  		console.log('Test for backslash confirmed',quote.replace("\\","\\"));
+  		return quote;
+  	}
   	// null, true, false cases
   	return (quote.trim()==="null") ? null : (quote.trim()==="true") ? true : (quote.trim()==="false") ? false : quote;
   	// return quote;
@@ -51,7 +60,7 @@ var parseJSON = function(json) {
 			// console.log('comma at',comma);
 			if (comma===-1){
 				if (what==='square'){
-					console.log(inside.trim());
+					// console.log('trimmed',inside.trim());
 					if ((inside.trim()[0]==='[' && inside.trim().slice(-1)===']') ||(inside.trim()[0]==='{' && inside.trim().slice(-1)==='}')){
 							console.log('invoking internal object');
 							value=parseJSON(inside.trim());
@@ -67,9 +76,6 @@ var parseJSON = function(json) {
 					}
 					
 					console.log(value);
-					if (value.length==0){
-						value=[];
-					}
 					array.push(value);
 				}
 				else{
@@ -173,11 +179,9 @@ var parseJSON = function(json) {
   };
   var sqOpen=json.search(/\[/);
   var sqClosed=json.search(/\]/);
-  // if (sqClosed){
-  // 	while (/\]/.test(json.slice(sqClosed+1))){
-  // 		sqClosed=json.slice(sqClosed+1).search(/\]/);
-  // 	}
-  // }
+  if (sqClosed){
+  	sqClosed=json.length-1-(json.split('').reverse().join('')).search(/\]/);
+  }
   
   var cuOpen=json.search(/\{/);
   var cuClosed=json.search(/\}/);
