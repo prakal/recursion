@@ -67,6 +67,9 @@ var parseJSON = function(json) {
 					}
 					
 					console.log(value);
+					if (value.length==0){
+						value=[];
+					}
 					array.push(value);
 				}
 				else{
@@ -133,10 +136,21 @@ var parseJSON = function(json) {
 						value=parseJSON(inside.slice(startOfArrayPosition,endOfArrayPosition+1));
 						inside=inside.slice(endOfArrayPosition+1);
 					}
-					else{
-						value = inside.slice(colon+2,comma2);
-						inside=inside.slice(comma2+2);
+					else {
+						if (/\{/.test(inside)){
+							// find the corollory } for the { by reversing string and searching it.
+							var endOfObjectPosition=inside.length-1-(inside.split('').reverse().join('')).search(/\}/);
+							console.log('found end of object at:',endOfObjectPosition);
+							var startOfObjectPosition=inside.search(/\{/);
+							value=parseJSON(inside.slice(startOfObjectPosition,endOfObjectPosition+1));
+							inside=inside.slice(endOfObjectPosition+1);
+						}
+						else{
+							value = inside.slice(colon+2,comma2);
+							inside=inside.slice(comma2+2);
+						}
 					}
+					
 					
 					console.log('value is',value,'key is',key);
 					obj[quoteSlice(key)]=quoteSlice(value);
