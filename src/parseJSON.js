@@ -51,17 +51,22 @@ var parseJSON = function(json) {
 			// console.log('comma at',comma);
 			if (comma===-1){
 				if (what==='square'){
-					var decimalTest=/\./.test(inside);
-					if (decimalTest===false){
-						value = (!isNaN(parseInt(inside)) ? parseInt(inside) : quoteSlice(inside));
+					console.log(inside.trim());
+					if ((inside.trim()[0]==='[' && inside.trim().slice(-1)===']') ||(inside.trim()[0]==='{' && inside.trim().slice(-1)==='}')){
+							console.log('invoking internal object');
+							value=parseJSON(inside.trim());
 					}
 					else{
-						value = (!isNaN(parseFloat(inside)) ? parseFloat(inside) : quoteSlice(inside));
+						var decimalTest=/\./.test(inside);
+						if (decimalTest===false){
+							value = (!isNaN(parseInt(inside)) ? parseInt(inside) : quoteSlice(inside));
+						}
+						else{
+							value = (!isNaN(parseFloat(inside)) ? parseFloat(inside) : quoteSlice(inside));
+						}
 					}
-					if (inside.trim()[0]==='[' && inside.trim().slice(-1)===']'){
-						console.log('invoking internal object');
-						value=parseJSON(inside);
-					}
+					
+					console.log(value);
 					array.push(value);
 				}
 				else{
@@ -91,12 +96,19 @@ var parseJSON = function(json) {
 					value=inside.slice(0,comma);
 					var decimalTest=/\./.test(value);
 					console.log(value,parseInt(value),decimalTest);
-					if (decimalTest===false){
-						value = (!isNaN(parseInt(value)) ? parseInt(value) : quoteSlice(value));
+					if ((value.trim()[0]==='[' && value.trim().slice(-1)===']') ||(value.trim()[0]==='{' && value.trim().slice(-1)==='}')){
+						console.log('invoking internal object');
+						value=parseJSON(value);
 					}
 					else{
-						value = (!isNaN(parseFloat(value)) ? parseFloat(value) : quoteSlice(value));
+						if (decimalTest===false){
+							value = (!isNaN(parseInt(value)) ? parseInt(value) : quoteSlice(value));
+						}
+						else{
+							value = (!isNaN(parseFloat(value)) ? parseFloat(value) : quoteSlice(value));
+						}
 					}
+					
 					
 					array.push(value);
 					inside=inside.slice(comma+1);
