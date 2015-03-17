@@ -105,7 +105,7 @@ var parseJSON = function(json) {
 					value=inside.slice(0,comma);
 					var decimalTest=/\./.test(value);
 					console.log(value,parseInt(value),decimalTest);
-					if ((value.trim()[0]==='[' && value.trim().slice(-1)===']') ||(value.trim()[0]==='{' && value.trim().slice(-1)==='}')){
+					if (value.trim()[0]==='['  ||value.trim()[0]==='{' ){
 						console.log('invoking internal object');
 						value=parseJSON(value);
 					}
